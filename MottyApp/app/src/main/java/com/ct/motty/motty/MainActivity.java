@@ -234,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 device = entry.getValue();
                 deviceVID = device.getVendorId();
                 devicePID = device.getProductId();
+
+                tvResult.setText("usb found! "+ usbDevices.size()+ deviceVID + " " + devicePID);
                 //if(deviceVID == 11111) //vendor ID
                 {
                     //requestUserPermission();
@@ -373,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 boolean granted =
                         intent.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
                 if (granted) {
+                    tvResult.setText("granted");
                     connection = usbManager.openDevice(device);
                     serialPort = UsbSerialDevice.createUsbSerialDevice(device, connection);
                     if (serialPort != null) {
