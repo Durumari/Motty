@@ -423,6 +423,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onReceivedData(byte[] arg0) {
             try {
+                if(arg0 == null)
+                    return;
+
                 String data = new String(arg0, "UTF-8");
                 Log.d("SERIAL_RECEIVED", data);
                 runOnUiThread(new Runnable() {
@@ -434,10 +437,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
 
-                Log.d("SERIAL_RECEIVED_BYTES: ", arg0.toString());
-                String error_bytes = new String(arg0, "UTF-8");
-                Log.d("SERIAL_RECEIVED_ERROR:", error_bytes);
-                if (data.equals("3")){
+                //Log.d("SERIAL_RECEIVED_BYTES: ", arg0.toString());
+                //String error_bytes = new String(arg0, "UTF-8");
+                //Log.d("SERIAL_RECEIVED_ERROR:", error_bytes);
+                if ("3".equals(data)){
                     isWatered = false;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -445,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             showGuide();
                         }
                     });
-                }else if(data.equals("4")){
+                }else if("4".equals(data)){
                     isWatered = true;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -456,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else
                 {
-                    Log.e("SERIAL_RECEIVED_ERROR:", data);
+                    Log.e("SERIAL_RECEIVED_ERROR:","null error");
                 }
                 //Case
 //                if (arg0[0] == '3'){
