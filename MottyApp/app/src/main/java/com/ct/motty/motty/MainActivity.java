@@ -87,8 +87,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     boolean isWatered = false;
 
+    UsbManager usbManager = null;
+
     private Handler mHandler;
-    private UsbManager usbManager;
+    private UsbManager usbManagerƒ;
     private UsbDevice device;
     private UsbDeviceConnection connection;
     private UsbSerialDevice serialPort;
@@ -102,13 +104,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     public void write(byte[] data) {
-        if (serialPort != null)
+        if (serialPort != null) {
+            tvResult.setText("sended : " + data.toString());
             serialPort.syncWrite(data, 0);
+        }
     }
     @Override
     public void onStop(){
         super.onStop();
-        unregisterReceiver(broadcastReceiver);
+        if(registerdRCV) {
+            unregisterReceiver(broadcastReceiver);
+            registerdRCV = false;
+        }
         if (serialPort != null)
             serialPort.close();
     }
@@ -214,13 +221,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int deviceVID;
     int devicePID;
     public void initSerialCommunication(){
-
         serialPortConnected = false;
         MainActivity.SERVICE_CONNECTED = true;
         setFilter();
+
         usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         HashMap<String, UsbDevice> usbDevices = usbManager.getDeviceList();
         if (!usbDevices.isEmpty()) {
+            tvResult.setText("usb found! "+ usbDevices.size());
             boolean keep = true;
             for (Map.Entry<String, UsbDevice> entry : usbDevices.entrySet()) {
                 device = entry.getValue();
@@ -228,7 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 devicePID = device.getProductId();
                 //if(deviceVID == 11111) //vendor ID
                 {
-                    requestUserPermission();
+                    //requestUserPermission();
                     keep = false;
                 }
                 /*else {
@@ -244,12 +252,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    boolean registerdRCV = false;
     private void setFilter() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_USB_PERMISSION);
         filter.addAction(ACTION_USB_DETACHED);
         filter.addAction(ACTION_USB_ATTACHED);
         registerReceiver(broadcastReceiver, filter);
+        registerdRCV = true;
     }
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         @Override
@@ -373,14 +383,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                             serialPort.read(mCallback);
+                            tvResult.setText(tvResult.getText() + " PORT OPEN");
                             Log.d("SERIAL", "PORT OPEN");
                         } else {
+
+                            tvResult.setText(tvResult.getText() + " PORT NOT OPEN");
                             Log.d("SERIAL", "PORT NOT OPEN");
                         }
                     } else {
+
+                        tvResult.setText(tvResult.getText() + " PORT IS NULL");
                         Log.d("SERIAL", "PORT IS NULL");
                     }
                 } else {
+
+                    tvResult.setText(tvResult.getText() + " PORT NOT GRANTED");
                     Log.d("SERIAL", "PERM NOT GRANTED");
                 }
             }
@@ -393,9 +410,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 String data = new String(arg0, "UTF-8");
                 Log.d("SERIAL_RECEIVED", data);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+                        tvResult.setText(data + " recieved");
+                    }
+                });
 
                 //Case
-                if ("00".equals(data)){
+                if ("0".equals(data)){
                     isWatered = false;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -403,7 +428,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             showGuide();
                         }
                     });
-                }else if("01".equals(data)){
+                }else if("1".equals(data)){
                     isWatered = true;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -536,12 +561,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(finalResult.gradeInt == 0){
                 String data = "0";
                 write(data.getBytes());
+//                Log.i("write:", data);
             }else if(finalResult.gradeInt == 1){
                 String data = "1";
                 write(data.getBytes());
+//                Log.i("write:", data);
             }else{
                 String data = "2";
                 write(data.getBytes());
+//                Log.i("write:", data);
             }
 
         };
