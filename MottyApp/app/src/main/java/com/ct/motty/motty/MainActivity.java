@@ -428,6 +428,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 String data = new String(arg0, "UTF-8");
                 Log.d("SERIAL_RECEIVED", data);
+                if(data.length() == 0)
+                    return;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -440,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //Log.d("SERIAL_RECEIVED_BYTES: ", arg0.toString());
                 //String error_bytes = new String(arg0, "UTF-8");
                 //Log.d("SERIAL_RECEIVED_ERROR:", error_bytes);
-                if ("3".equals(data)){
+                /*if ("3".equals(data)){
                     isWatered = false;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -460,25 +462,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else
                 {
                     Log.e("SERIAL_RECEIVED_ERROR:","null error");
-                }
+                }*/
                 //Case
-//                if (arg0[0] == '3'){
-//                    isWatered = false;
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            showGuide();
-//                        }
-//                    });
-//                }else if(arg0[0] == '4'){
-//                    isWatered = true;
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            showGuide();
-//                        }
-//                    });
-//                }
+                if (arg0[0] == '3'){
+                    isWatered = false;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showGuide();
+                        }
+                    });
+                }else if(arg0[0] == '4'){
+                    isWatered = true;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showGuide();
+                        }
+                    });
+                }else
+                {
+                    Log.e("SERIAL_RECEIVED_ERROR:","null error");
+                }
 
 
 
