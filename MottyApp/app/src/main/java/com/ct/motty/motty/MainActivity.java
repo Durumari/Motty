@@ -105,8 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void write(byte[] data) {
         if (serialPort != null) {
-            tvResult.setText("sended : " + data.toString());
-            serialPort.syncWrite(data, 0);
+            tvResult.setText("sended : " + data);
+
+            serialPort.write(data);
         }
     }
     @Override
@@ -149,23 +150,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     void showGuide(){
+//        tvResult.setText(tvResult.getText() + "good!!!!!!!");
+//        imageView.setImageDrawable(getDrawable(R.drawable.good));
+//        notificationBigText(MainActivity.this,"대전","23 좋음", R.drawable.family, MainActivity.class );
         if(switchDevMode.isChecked()){
             if(switchWaterMode.isChecked()){
                 if(GradeforDEVMODE == 0){
                     //좋은 이미지
+                    tvResult.setText(tvResult.getText() + "good!!!!!!!");
                     imageView.setImageDrawable(getDrawable(R.drawable.good));
                     notificationBigText(MainActivity.this,"대전","23 좋음", R.drawable.family, MainActivity.class );
                 }else if(GradeforDEVMODE == 1){
                     //나쁜 이미지
+                    tvResult.setText(tvResult.getText() + "bad!!!!!!!");
                     imageView.setImageDrawable(getDrawable(R.drawable.bad));
                     notificationBigText(MainActivity.this,"대전","51 나쁨", R.drawable.family, MainActivity.class );
                 }else{
                     //매우 나쁜 이미지
+                    tvResult.setText(tvResult.getText() + "vb!!!!!!!");
                     imageView.setImageDrawable(getDrawable(R.drawable.verybad));
                     notificationBigText(MainActivity.this,"대전","102 매우 나쁨", R.drawable.family, MainActivity.class );
                 }
             }else{
                 //물 달라는 이미지
+                tvResult.setText(tvResult.getText() + "water!!!!!!!");
 
                 imageView.setImageDrawable(getDrawable(R.drawable.nowater));
                 notificationBigText(MainActivity.this,"대전","먹고 살자하는 건데, 물좀 주세요!!", R.drawable.family, MainActivity.class );
@@ -238,7 +246,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvResult.setText("usb found! "+ usbDevices.size()+ deviceVID + " " + devicePID);
                 //if(deviceVID == 11111) //vendor ID
                 {
-                    //requestUserPermission();
+                    requestUserPermission();
+
                     keep = false;
                 }
                 /*else {
@@ -353,14 +362,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnGood:
+                GradeforDEVMODE = 0;
                 write("0".getBytes());
                 hndResult = "Value[" + 23 +"] " + "WHO Grade[좋음]";
                 break;
             case R.id.btnBad:
+                GradeforDEVMODE = 1;
                 write("1".getBytes());
                 hndResult = "Value[" + 56 +"] " + "WHO Grade[나쁨]";
                 break;
             case R.id.btnVeryBad:
+                GradeforDEVMODE =2;
                 write("2".getBytes());
                 hndResult = "Value[" + 102 +"] " + "WHO Grade[매우 나쁨]";
                 break;
@@ -422,8 +434,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
 
-                //Case
-                if ("0".equals(data)){
+                Log.d("SERIAL_RECEIVED_BYTES: ", arg0.toString());
+                String error_bytes = new String(arg0, "UTF-8");
+                Log.d("SERIAL_RECEIVED_ERROR:", error_bytes);
+                if (data.equals("3")){
                     isWatered = false;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -431,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             showGuide();
                         }
                     });
-                }else if("1".equals(data)){
+                }else if(data.equals("4")){
                     isWatered = true;
                     runOnUiThread(new Runnable() {
                         @Override
@@ -440,6 +454,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 }
+                else
+                {
+                    Log.e("SERIAL_RECEIVED_ERROR:", data);
+                }
+                //Case
+//                if (arg0[0] == '3'){
+//                    isWatered = false;
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            showGuide();
+//                        }
+//                    });
+//                }else if(arg0[0] == '4'){
+//                    isWatered = true;
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            showGuide();
+//                        }
+//                    });
+//                }
 
 
 
@@ -562,17 +598,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void dispatchMessage(Message msg) {
             tvResult.setText(hndResult);
             if(finalResult.gradeInt == 0){
-                String data = "0";
-                write(data.getBytes());
-//                Log.i("write:", data);
+                //String data = "48";
+
+//                byte[] a = new byte[1];
+//                a[0] = 0x0000;
+//                write(a);
+                write("0".getBytes());
+                Log.i("write:", "0");
             }else if(finalResult.gradeInt == 1){
-                String data = "1";
-                write(data.getBytes());
-//                Log.i("write:", data);
+//                byte[] a = new byte[1];
+//                a[0] = 0x0001;
+//                write(a);
+                write("1".getBytes());
+                Log.i("write:", "1");
             }else{
-                String data = "2";
-                write(data.getBytes());
-//                Log.i("write:", data);
+//                byte[] a = new byte[1];
+//                a[0] = 0x0002;
+//                write(a);
+                write("2".getBytes());
+                Log.i("write:", "2");
             }
 
         };
