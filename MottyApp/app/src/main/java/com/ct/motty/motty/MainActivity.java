@@ -423,21 +423,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onReceivedData(byte[] arg0) {
             try {
-                if(arg0 == null)
+                if(arg0 == null){
+                    Log.d("SERIAL_RECEIVED_ERROR", "null");
                     return;
+                }
 
+                if(arg0.length == 0){
+                    Log.d("SERIAL_RECEIVED_ERROR", "arg0 length is 0");
+                    return;
+                }
                 String data = new String(arg0, "UTF-8");
                 Log.d("SERIAL_RECEIVED", data);
-                if(data.length() == 0)
+                if(data.length() == 0){
+                    Log.d("SERIAL_RECEIVED_ERROR", "data length is 0");
                     return;
-                runOnUiThread(new Runnable() {
+                }
+
+                /*runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
 
                         tvResult.setText(data + " recieved");
                     }
-                });
+                });*/
 
                 //Log.d("SERIAL_RECEIVED_BYTES: ", arg0.toString());
                 //String error_bytes = new String(arg0, "UTF-8");
