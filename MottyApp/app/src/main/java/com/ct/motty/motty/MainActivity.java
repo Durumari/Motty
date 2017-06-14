@@ -362,19 +362,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btnGood:
-                imageView.setImageDrawable(getDrawable(R.drawable.good));
+//                imageView.setImageDrawable(getDrawable(R.drawable.good));
                 GradeforDEVMODE = 0;
                 write("0".getBytes());
                 hndResult = "Value[" + 23 +"] " + "WHO Grade[좋음]";
                 break;
             case R.id.btnBad:
-                imageView.setImageDrawable(getDrawable(R.drawable.bad));
+//                imageView.setImageDrawable(getDrawable(R.drawable.bad));
                 GradeforDEVMODE = 1;
                 write("1".getBytes());
                 hndResult = "Value[" + 56 +"] " + "WHO Grade[나쁨]";
                 break;
             case R.id.btnVeryBad:
-                imageView.setImageDrawable(getDrawable(R.drawable.verybad));
+//                imageView.setImageDrawable(getDrawable(R.drawable.verybad));
                 GradeforDEVMODE =2;
                 write("2".getBytes());
                 hndResult = "Value[" + 102 +"] " + "WHO Grade[매우 나쁨]";
